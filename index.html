@@ -62,124 +62,83 @@
 </head>
 <body>
     <h1>Legal & Accounting</h1>
-    <form id="mcdaForm">
-        <label>Bond Authority:
-            <select id="muniBondStatute">
-                <option value="0">Limited to Projects on Utility Owned Property</option>
-                <option value="2">Projects under utility control</option>
-                <option value="5">Doesn't Mention Public or Private</option>
-                <option value="10">Says projects to benefit system </option>
-            </select>
-        </label>
-        <label>Accounting:
-            <select id="muniGovernance">
-                <option value="10"> Meets all criteria for streamlined regulated operations accounting: <br>
-                    Will Set Rates to Recover Cost <br>
-                    Rates Likely to Recover Costs <br>
-                    Governing Board Has Rate Setting Authority <br>
-                </option>
-                <option value="5"> Meets criteria for traditional accounting: Can Control property where investment is installed via easement/contract</option>
-                <option value="0"> Cannot control property and no control over rate setting</option>
-            </select>
-        </label>
-        <label>Co-Funders:
-            <select id="cofunders">
-                <option value="10">Yes</option>
-                <option value="5">In Process</option>
-                <option value="0">No</option>
-            </select>
-        </label>
-        <label>Risk Assessment:
-            <select id="riskScore">
-                <option value="10">Yes</option>
-                <option value="5">In Process</option>
-                <option value="0">No</option>
-            </select>
-        </label>
-        <button type="button" onclick="calculateScore()">Calculate</button>
-    </form>
+<form id="mcdaForm">
+    <label>Bond Authority:
+        <select id="muniBondStatute">
+            <option value="0">Limited to Projects on Utility Owned Property</option>
+            <option value="2">Projects under utility control</option>
+            <option value="5">Doesn't Mention Public or Private</option>
+            <option value="10">Says projects to benefit system</option>
+        </select>
+    </label>
+    <label>Accounting:
+        <select id="muniGovernance">
+            <option value="10"> Meets all criteria for streamlined regulated operations accounting: <br>
+                Will Set Rates to Recover Cost <br>
+                Rates Likely to Recover Costs <br>
+                Governing Board Has Rate Setting Authority <br>
+            </option>
+            <option value="5"> Meets criteria for traditional accounting: Can Control property where investment is installed via easement/contract</option>
+            <option value="0"> Cannot control property and no control over rate setting</option>
+        </select>
+    </label>
+    <button type="button" onclick="calculateScore()">Calculate</button>
+</form>
+
     <h2>Recommendation: <span id="totalScore"></span></h2>
 
-    <table id="resultsTable">
-        <thead>
-            <tr>
-                <th>Overall Assessment</th>
-                <th>Bond Authority</th>
-                <th>Accounting</th>
-                <th>Co-funders</th>
-                <th>Risk Assessment</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be dynamically filled based on calculation -->
-        </tbody>
-    </table>
+<table id="resultsTable">
+    <thead>
+        <tr>
+            <th>Overall Assessment</th>
+            <th>Bond Authority</th>
+            <th>Accounting</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Rows will be dynamically filled based on calculation -->
+    </tbody>
+</table>
+<script>
+function calculateScore() {
+    var muniBondStatuteScore = parseFloat(document.getElementById('muniBondStatute').value);
+    var muniGovernanceScore = parseFloat(document.getElementById('muniGovernance').value);
+    var total = muniBondStatuteScore + muniGovernanceScore;
 
-    <script>
-    function calculateScore() {
-        var muniBondStatuteScore = parseFloat(document.getElementById('muniBondStatute').value);
-        var muniGovernanceScore = parseFloat(document.getElementById('muniGovernance').value);
-        var cofundersScore = parseFloat(document.getElementById('cofunders').value);
-        var riskScore = parseFloat(document.getElementById('riskScore').value);
-        var total = muniBondStatuteScore + muniGovernanceScore + cofundersScore + riskScore;
-
-        // Description mapping for total score
-        var totalScoreDescription;
-        if (total >= 30) {
-            totalScoreDescription = "Water provider very likely meets legal and accounting thresholds";
-        } else if (total >= 18 && total < 30) {
-            totalScoreDescription = "Water provider likely meets legal and accounting thresholds";
-        } else {
-            totalScoreDescription = "Water Provider may not meet legal and accounting thresholds";
-        }
-
-        // Description mapping for individual scores
-        var bondAuthorityDescription = getBondAuthorityDescription(muniBondStatuteScore);
-        var accountingDescription = getAccountingDescription(muniGovernanceScore);
-        var cofundersDescription = getCofundersDescription(cofundersScore);
-        var riskAssessmentDescription = getRiskAssessmentDescription(riskScore);
-
-        document.getElementById('totalScore').innerText = totalScoreDescription;
-
-        var table = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
-        var newRow = table.insertRow();
-        newRow.innerHTML = `<td>${bondAuthorityDescription}</td><td>${accountingDescription}</td><td>${cofundersDescription}</td><td>${riskAssessmentDescription}</td><td>${totalScoreDescription}</td>`;
+    // Update the description mapping for total score based on new criteria
+    var totalScoreDescription;
+    if (total >= 15) {
+        totalScoreDescription = "Water provider very likely meets legal and accounting thresholds";
+    } else if (total >= 8 && total < 15) {
+        totalScoreDescription = "Water provider likely meets legal and accounting thresholds";
+    } else {
+        totalScoreDescription = "Water Provider may not meet legal and accounting thresholds";
     }
 
-    function getBondAuthorityDescription(score) {
-        switch (score) {
-            case 10: return "Water provider very likely has authority to bond finance upstream interventions";
-            case 5: return "Water provider likely has authority to bond finance upstream interventions";
-            case 2: return "Water provider may have authority to bond finance upstream interventions";
-            default: return "Water provider does not yet have authority to bond finance upstream interventions";
-        }
-    }
+    document.getElementById('totalScore').innerText = totalScoreDescription;
 
-    function getAccountingDescription(score) {
-        switch (score) {
-            case 10: return "Water provider can use streamlined regulated operations accounting";
-            case 5: return "Water provider must use traditional accounting";
-            default: return "Water provider does not yet have a pathway for proper accounting of upstream interventions";
-        }
-    }
+    var table = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+    var newRow = table.insertRow();
+    newRow.innerHTML = `<td>${totalScoreDescription}</td><td>${getBondAuthorityDescription(muniBondStatuteScore)}</td><td>${getAccountingDescription(muniGovernanceScore)}</td>`;
+}
 
-    function getCofundersDescription(score) {
-        switch (score) {
-            case 10: return "Water Provider has identified co-funders in place";
-            case 5: return "Water Provider may know potential co-funders";
-            default: return "Water provider has not yet identified potential co-funders";
-        }
+function getBondAuthorityDescription(score) {
+    switch (score) {
+        case 10: return "Water provider very likely has authority to bond finance upstream interventions";
+        case 5: return "Water provider likely has authority to bond finance upstream interventions";
+        case 2: return "Water provider may have authority to bond finance upstream interventions";
+        default: return "Water provider does not yet have authority to bond finance upstream interventions";
     }
+}
 
-    function getRiskAssessmentDescription(score) {
-        switch (score) {
-            case 10: return "Risk Assessment Completed: Yes";
-            case 5: return "Risk Assessment Completed: In Process";
-            default: return "Risk Assessment Completed: No";
-        }
+function getAccountingDescription(score) {
+    switch (score) {
+        case 10: return "Water provider can use streamlined regulated operations accounting";
+        case 5: return "Water provider must use traditional accounting";
+        default: return "Water provider does not yet have a pathway for proper accounting of upstream interventions";
     }
-
-    </script>
+}
+</script>
 
 </body>
 </html>
